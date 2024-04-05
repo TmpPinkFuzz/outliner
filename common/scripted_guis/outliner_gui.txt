@@ -1,0 +1,209 @@
+﻿
+outliner_unpin_red = {
+  is_shown = { outliner_pin_color = PIN_COLOR_RED }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_blue = {
+  is_shown = { outliner_pin_color = PIN_COLOR_BLUE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_orange = {
+  is_shown = { outliner_pin_color = PIN_COLOR_ORANGE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_green = {
+  is_shown = { outliner_pin_color = PIN_COLOR_GREEN }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_white = {
+  is_shown = { outliner_pin_color = PIN_COLOR_WHITE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_black = {
+  is_shown = { outliner_pin_color = PIN_COLOR_BLACK }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_white = {
+  is_shown = { outliner_pin_color = PIN_COLOR_WHITE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_normal = {
+  is_shown = { outliner_pin_color = PIN_COLOR_NONE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_choose_pin_color_red = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_RED } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_RED }
+  }
+}
+
+outliner_choose_pin_color_blue = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_BLUE } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_BLUE }
+  }
+}
+
+outliner_choose_pin_color_orange = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_ORANGE } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_ORANGE }
+  }
+}
+
+outliner_choose_pin_color_green = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_GREEN } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_GREEN }
+  }
+}
+
+outliner_choose_pin_color_white = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_WHITE } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_WHITE }
+  }
+}
+
+outliner_choose_pin_color_black = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_BLACK } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_BLACK }
+  }
+}
+
+outliner_choose_pin_color_normal = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_NONE } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_NONE }
+  }
+}
+
+outliner_show_character = {
+  scope = character 
+  saved_scopes = { actor }
+  is_shown = {
+    scope:actor = {
+      switch = {
+        trigger = root.outliner_pin_color
+        0 = { always = yes }
+        1 = { outliner_pin_color_filter_red = 0 }    # PIN_COLOR_RED   
+        2 = { outliner_pin_color_filter_blue = 0 }   # PIN_COLOR_BLUE   
+        3 = { outliner_pin_color_filter_orange = 0 } # PIN_COLOR_ORANGE 
+        4 = { outliner_pin_color_filter_green = 0 }  # PIN_COLOR_GREEN  
+        5 = { outliner_pin_color_filter_white = 0 }  # PIN_COLOR_WHITE  
+        6 = { outliner_pin_color_filter_black = 0 }  # PIN_COLOR_BLACK  
+      }
+    }
+  }
+}
+
+outliner_color_filter_red = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_RED } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = red }
+  }
+}
+
+outliner_color_filter_blue = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_BLUE } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = blue }
+  }
+}
+
+outliner_color_filter_orange = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_ORANGE } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = orange }
+  }
+}
+
+outliner_color_filter_green = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_GREEN } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = green }
+  }
+}
+
+outliner_color_filter_white = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_WHITE } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = white }
+  }
+}
+
+outliner_color_filter_black = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_BLACK } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = black }
+  }
+}
+
+outliner_icon_is_ward = {
+  scope = character
+  saved_scopes = { actor }
+
+  is_shown = {
+    scope:actor = { 
+      any_courtier = {
+        has_relation_ward = root
+      }
+    }
+  }
+}
+
+outliner_icon_is_guardian = {
+  scope = character
+  saved_scopes = { actor }
+
+  is_shown = {
+    scope:actor = { 
+      any_courtier = {
+        has_relation_guardian = root
+      }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+﻿
+PIN_COLOR_NONE   = 0
+PIN_COLOR_RED    = 1
+PIN_COLOR_BLUE   = 2
+PIN_COLOR_ORANGE = 3
+PIN_COLOR_GREEN  = 4
+PIN_COLOR_WHITE  = 5
+PIN_COLOR_BLACK  = 6
+
+outliner_pin_color = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color }
+    add = var:outliner_pin_color
+  }
+}
+
+outliner_pin_color_filter_red = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_red }
+    add = var:outliner_pin_color_filter_red
+  }
+}
+
+outliner_pin_color_filter_blue = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_blue }
+    add = var:outliner_pin_color_filter_blue
+  }
+}
+
+outliner_pin_color_filter_orange = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_orange }
+    add = var:outliner_pin_color_filter_orange
+  }
+}
+
+outliner_pin_color_filter_green = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_green }
+    add = var:outliner_pin_color_filter_green
+  }
+}
+
+outliner_pin_color_filter_white = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_white }
+    add = var:outliner_pin_color_filter_white
+  }
+}
+outliner_pin_color_filter_black = {
+  value = 0
+  if = {
+    limit = { exists = var:outliner_pin_color_filter_black }
+    add = var:outliner_pin_color_filter_black
+  }
+}
+
+outliner_pin_color_filter_sum = {
+  value = 0
+  add = outliner_pin_color_filter_red
+  add = outliner_pin_color_filter_blue
+  add = outliner_pin_color_filter_orange
+  add = outliner_pin_color_filter_green
+  add = outliner_pin_color_filter_white
+  add = outliner_pin_color_filter_black
+}

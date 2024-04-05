@@ -1,0 +1,796 @@
+widget = {
+  name = "outliner_window"
+  parentanchor = top|right
+  position = { -35 50 }
+  alwaystransparent = no
+  filter_mouse = all
+  layer = windows_layer
+
+  state = {
+    name = _show
+    using = Animation_FadeIn_Quick
+    start_sound = {
+      soundeffect = "event:/SFX/UI/Generic/Windows/sfx_ui_generic_window_outliner_show"
+    }
+  }
+
+  state = {
+    name = _hide
+    using = Animation_FadeOut_Standard
+    start_sound = {
+      soundeffect = "event:/SFX/UI/Generic/Windows/sfx_ui_generic_window_outliner_hide"
+    }
+  }
+
+  state = {
+    name = "hide_outliner"
+    using = Animation_FadeOut_Standard
+    trigger_when = "[Not(IsDefaultGUIMode)]"
+  }
+
+  state = {
+    name = "show_outliner"
+    using = Animation_FadeIn_Quick
+    trigger_when = "[IsDefaultGUIMode]"
+  }
+
+  flowcontainer = {
+    visible = "[And( Not(IsGameViewOpen('barbershop')), And( Not( IsPauseMenuShown ), Not(IsRightWindowOpen) ) )]"
+    resizeparent = yes
+    margin = { 10 10 }
+    margin_bottom = 15
+
+    state = {
+      name = _show
+      using = Animation_FadeIn_Standard
+    }
+
+    state = {
+      name = _hide
+      using = Animation_FadeOut_Quick
+    }
+
+    background = {
+      name = "paper_texture_shadow"
+      texture = "gfx/interface/window_event/tile_letter_shadow.dds"
+      spriteType = Corneredtiled
+      spriteborder = { 200 200 }
+      margin = { -15 0 }
+      margin_right = -20
+    }
+
+    background = {
+      name = "paper_texture_flat"
+      texture = "gfx/interface/window_event/tile_letter_flat.dds"
+      spriteType = Corneredtiled
+      spriteborder = { 200 200 }
+      alpha = 0.9
+      color = { 0.51 0.53 0.58 1 }
+      margin = { -15 0 }
+      margin_right = -20
+
+      modify_texture = {
+        name = "paper_texture_overlay"
+        texture = "gfx/interface/window_event/overlay_letter_texture.dds"
+        spriteType = Corneredstretched
+        blend_mode = overlay
+      }
+    }
+
+    scrollarea = {
+      autoresizescrollarea = yes
+      scrollbarpolicy_horizontal = always_off
+      maximumsize = { -1 1100 }  # mod -1 500
+      size = { 350 0 }           # mod 300 0
+
+      scrollbar_vertical = { using = Scrollbar_Vertical }
+
+      scrollwidget = {
+        vbox = {
+          set_parent_size_to_minimum = yes
+          min_width = 350        # mod 300
+          margin = { 10 0 }
+          margin_right = 15
+          spacing = 2
+
+          button_outliner_header = {
+            name = "units_header"
+            layoutpolicy_horizontal = expanding
+            visible = "[GetPlayer.IsValid]"
+
+            blockoverride "button_expand_frame"
+            {
+              frame = "[BoolTo1And2(Outliner.IsCategoryShown('unit'))]"
+            }
+
+            blockoverride "oh_button"
+            {
+              onclick = "[Outliner.ToggleCategory('unit')]"
+              tooltip = "[SelectLocalization( Outliner.IsCategoryShown('unit'), 'OUTLINER_COLLAPSE', 'OUTLINER_EXPAND' )]"
+              oversound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_pointer_over"
+              clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_icon_select"
+            }
+
+            blockoverride "oh_toggle_frame" { frame = "[BoolTo1And2(Outliner.IsCategoryShown('unit'))]" }
+            blockoverride "oh_name"         { text = "OUTLINER_ARMIES" }
+            blockoverride "oh_count"        { text = "[Outliner.GetCategoryItemsCount('unit')|V]" }
+            blockoverride "expanded"        { frame = "[BoolTo1And2(Outliner.IsCategoryShown('unit'))]" }
+          }
+          vbox = {
+            name = "units"
+            datamodel = "[Outliner.GetUnitItems]"
+            visible = "[And(Outliner.IsCategoryShown('unit'), GetPlayer.IsValid)]"
+            layoutpolicy_horizontal = expanding
+            margin = { 4 4 }
+            margin_bottom = 4
+
+            hbox = {
+              layoutpolicy_horizontal = expanding
+
+              expand = {}
+
+              text_single = {
+                visible = "[And(And(Outliner.IsCategoryShown('unit'), IsDataModelEmpty(Outliner.GetUnitItems)), GetPlayer.IsValid)]"
+                name = "no_units"
+                text = "OUTLINER_NO_ARMIES"
+                default_format = "#light_background;italic"
+              }
+
+              expand = {}
+            }
+            item = { outliner_army_item = { } }
+          }
+
+          button_outliner_header = {
+            name = "holdings_header"
+            layoutpolicy_horizontal = expanding
+            visible = "[GetPlayer.IsValid]"
+
+            blockoverride "button_expand_frame"   { frame = "[BoolTo1And2(Outliner.IsCategoryShown('holding'))]" }
+            blockoverride "oh_name"               { text = "OUTLINER_HOLDINGS" }
+            blockoverride "oh_count"              { text = "[Outliner.GetCategoryItemsCount('holding')|V]" }
+            blockoverride "expanded"              { frame = "[BoolTo1And2(Outliner.IsCategoryShown('holding'))]" }
+
+            blockoverride "oh_button" {
+              onclick = "[Outliner.ToggleCategory('holding')]" 
+              tooltip = "[SelectLocalization( Outliner.IsCategoryShown('holding'), 'OUTLINER_COLLAPSE', 'OUTLINER_EXPAND' )]"
+            }
+          }
+
+          vbox = {
+            name = "holdings"
+            datamodel = "[Outliner.GetHoldingItems]"
+            visible = "[Outliner.IsCategoryShown('holding')]"
+            layoutpolicy_horizontal = expanding
+            margin = { 8 5 }
+            margin_bottom = 4
+
+            item = { outliner_holding_item = { } }
+          }
+#########################################################################################
+# pinned characters
+          button_outliner_header = {
+            name = "pinned_characters_header"
+            layoutpolicy_horizontal = expanding
+
+            blockoverride "button_expand_frame" { frame = "[BoolTo1And2(Outliner.IsCategoryShown('pinned_character'))]" }
+            blockoverride "expanded"            { frame = "[BoolTo1And2(Outliner.IsCategoryShown('pinned_character'))]" }
+            blockoverride "oh_toggle_frame"     { frame = "[BoolTo1And2(Outliner.IsCategoryShown('pinned_character'))]" }
+
+            blockoverride "oh_name" {
+#              text = "OUTLINER_PINNED_CHARACTERS" 
+               raw_text = "People"
+            }
+
+            blockoverride "oh_count" {
+              text = "[Outliner.GetCategoryItemsCount('pinned_character')|V]" 
+            }
+
+            blockoverride "oh_filters" {
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_red"
+                datacontext = "[GetScriptedGui('outliner_color_filter_red')]"
+                modify_texture = { texture = "gfx/interface/colors/red.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_blue"
+                datacontext = "[GetScriptedGui('outliner_color_filter_blue')]"
+                modify_texture = { texture = "gfx/models/debug/blue.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_orange"
+                datacontext = "[GetScriptedGui('outliner_color_filter_orange')]"
+                modify_texture = { texture = "gfx/interface/colors/orange.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_green"
+                datacontext = "[GetScriptedGui('outliner_color_filter_green')]"
+                modify_texture = { texture = "gfx/interface/colors/outliner_green.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_white"
+                datacontext = "[GetScriptedGui('outliner_color_filter_white')]"
+                modify_texture = { texture = "gfx/interface/colors/white.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_black"
+                datacontext = "[GetScriptedGui('outliner_color_filter_black')]"
+                modify_texture = { texture = "gfx/interface/colors/black.dds" }
+              }
+            }
+
+            blockoverride "oh_button"
+            {
+              onclick = "[Outliner.ToggleCategory('pinned_character')]"
+              tooltip = "[SelectLocalization( Outliner.IsCategoryShown('pinned_character'), 'OUTLINER_COLLAPSE', 'OUTLINER_EXPAND' )]"
+            }
+          }
+
+          vbox = {
+            name = "pinned_characters"
+            visible = "[Outliner.IsCategoryShown('pinned_character')]"
+            datamodel = "[Outliner.GetPinnedCharacters]"
+            layoutpolicy_horizontal = expanding
+            margin = { 5 5 }
+            margin_bottom = 10
+            spacing = 2
+
+            hbox = {
+              layoutpolicy_horizontal = expanding
+
+              expand = {}
+
+              text_single = {
+                visible = "[And(Outliner.IsCategoryShown('pinned_character'), IsDataModelEmpty(Outliner.GetPinnedCharacters))]"
+                name = "no_pinned_characters"
+                text = "OUTLINER_NO_PINNED_CHARACTERS"
+                autoresize = yes
+                default_format = "#light_background;italic"
+              }
+
+              expand = {}
+            }
+            item = { outliner_pinned_character_item = { } }
+          }
+          expand = { }
+        }
+      }              
+      expand = {}
+    }
+  }
+}
+
+types Outliner {
+  type button_outliner_header = button_tab {
+    size = { 0 31 }
+
+    block "oh_button" {}
+
+    hbox = {
+      layoutpolicy_horizontal = expanding
+      margin = { 15 0 }
+      spacing = 5
+
+
+      using = tooltip_ws
+
+      icon = {
+        name = "Expand"
+        texture = "gfx/interface/buttons/button_tree_expand.dds"
+        framesize = { 36 36 }
+        size = { 22 22 }
+        block "button_expand_frame" {}
+      }
+
+      text_single = {
+        name = "category"
+        layoutpolicy_horizontal = expanding
+        align = nobaseline
+        default_format = "#high"
+
+        block "oh_name" { raw_text = "..." }
+      }
+
+      block "oh_filters" { }
+
+      text_single = {
+        name = "count"
+        align = nobaseline
+
+        block "oh_count" { raw_text = "..." }
+      }
+    }
+  }
+
+  type outliner_army_cmdr_button = button { size = { 20 20 } onclick = "[DefaultOnCharacterClick(Army.GetCommander.GetID)]" }
+  type outliner_goto_army_button = button { size = { 20 20 } onclick = "[UnitItem.SelectAndPanUnit]" tooltip = "[Army.GetMovementInfoForTooltip]" }
+
+  type outliner_army_item_content_hbox = hbox {
+    margin_right = 0
+
+    hbox = {
+      min_width = 20
+      visible = "[EqualTo_string(UnitItem.GetStatusDescription, SelectLocalization(Army.IsMoving, 'UNIT_STATE_COMBAT', 'UNIT_STATE_COMBAT'))]"
+
+      button = {
+        size = { 20 20 }
+        texture = "gfx/interface/icons/map_icons/combat_map_icon.dds"
+        onclick = "[UnitItem.PanToUnit]"
+      }
+    }
+    hbox = {
+      min_width = 20
+      visible = "[Not(EqualTo_string(UnitItem.GetStatusDescription, SelectLocalization(Army.IsMoving, 'UNIT_STATE_COMBAT', 'UNIT_STATE_COMBAT')))]"
+
+      outliner_goto_army_button = { texture = "gfx/interface/icons/combat_effects/moving_army.dds"     visible = "[And(Army.IsMoving,Not(UnitItem.IsRetreating))]" }
+      outliner_goto_army_button = { texture = "gfx/interface/icons/map_icons/army_icon_retreating.dds" visible = "[And(Army.IsMoving,UnitItem.IsRetreating)]" }
+
+      button = { size = { 20 20 } visible = "[Army.IsSieging]"                 texture = "gfx/interface/icons/map_icons/onmap_siege_icon.dds" onclick = "[DefaultOnSiegeClick(Army.GetLocation.GetSiege.GetID)]" tooltip = "[Army.GetLocation.GetSiege.GetSiegeDescription]" }
+      button = { size = { 20 20 } visible = "[Army.GetLocation.HasActiveRaid]" texture = "gfx/interface/icons/map_icons/onmap_raid_icon.dds"  onclick = "[DefaultOnRaidClick(Army.GetLocation.GetRaid.Self)]"    tooltip = "MAP_RAID_TOOLTIP" }
+    }
+    hbox = {
+      min_width = 20
+      outliner_army_cmdr_button = { texture = "gfx/interface/icons/icon_commander.dds"  visible = "[And(Army.GetCommander.IsValid,Not(UnitItem.IsRulerCommander))]" }
+      outliner_army_cmdr_button = { texture = "gfx/interface/icons/icon_commander.dds"  visible = "[And(Army.GetCommander.IsValid,UnitItem.IsRulerCommander)]" }
+    }
+    hbox = {
+      min_width = 20
+      icon = { size = { 20 20 } texture = "gfx/interface/icons/army_quality_icon.dds" framesize = { 32 32 } frame = "[UnitItem.GetQualityLevel]" }
+    }
+    hbox = {
+      margin_right = 10
+      layoutpolicy_horizontal = expanding
+      min_width = 45
+        text_single = {
+        text = "[Army.GetSoldierCountString]"
+        default_format = "#high"
+        align = nobaseline
+      }
+    }
+  }
+
+  type outliner_army_item = button_list {
+    name = "unit_item"
+    datacontext = "[UnitItem.GetArmy]"
+    layoutpolicy_horizontal = expanding
+    size = { 0 28 }
+    
+    onclick = "[UnitItem.SelectAndPanUnit]"
+    onrightclick = "[UnitItem.PanToUnit]"
+    button_ignore = none
+    down = "[UnitItem.IsSelected]"
+    
+    margin_widget = {
+      size = { 100% 100% }  
+      margin = { 5 2 } 
+      progressbar_standard_transparent = { 
+        name = "progress_bar" 
+        size = { 100% 100% } 
+        alpha = 0.8 
+        visible = "[And(Not(Army.IsMoving),Army.IsSieging)]"
+        value = "[IntToFloat(GetProgressBarValueMax(Army.GetLocation.GetSiege.GetProgress,'(float)100'))]"
+      }
+    }
+    
+    hbox = {
+      margin = { 10 0 }
+      layoutpolicy_horizontal = expanding
+      spacing = 5
+    
+      text_single = {
+        layoutpolicy_horizontal = expanding
+        autoresize = no
+        text = "[Army.GetNameNoTooltip]"
+        default_format = "#high"
+        align = nobaseline
+      }
+      expand = {}
+      outliner_army_item_content_hbox = { }
+    
+      using = tooltip_ws
+      tooltipwidget = {
+        using = unit_icon_item_tooltip
+    
+        blockoverride "extra_unit_info"
+        {
+          vbox = {
+            name = "army_extra_info"
+            layoutpolicy_horizontal = expanding
+            ignoreinvisible = yes
+            margin = { 5 0 }
+    
+            text_single = { name = "status_info"      text = "[UnitItem.GetStatusDescription]" align = left layoutpolicy_horizontal = expanding }
+            text_single = { name = "warning_info"     text = "[UnitItem.GetOutlinerWarning]"   margin = { 10 5 } }
+            text_single = { name = "click_info"       text = "[SelectLocalization(UnitItem.IsSelectedOnArmyWindow, 'OUTLINER_ARMY_CLICK_TO_PAN', 'OUTLINER_ARMY_CLICK_TO_SELECT')]" margin = { 10 5 } }
+            text_single = { name = "right_click_info" text = "OUTLINER_ARMY_RIGHT_CLICK_TO_PAN" margin = { 10 5 } }
+          }
+        }
+      }
+    }
+  }
+  type outliner_holding_item = button_list {
+    name = "holding_item"
+    datacontext = "[OutlinerHoldingItem.GetTitle]"
+    datacontext = "[OutlinerHoldingItem.GetTitle.GetProvince.GetHolding]"
+    layoutpolicy_horizontal = expanding
+    size = { 0 28 }
+
+    onclick = "[OutlinerHoldingItem.OnClick]"
+    down = "[Or(Holding.IsHoldingOrNonCapitalHoldingHovered, Holding.IsSelected)]"
+    tooltipwidget = { holding_tooltip_click = {} }
+    using = tooltip_ws
+    using = Holding_Mouse_Entry
+
+    margin_widget = {
+      size = { 100% 100% }
+      margin = { 5 2 }
+
+      progressbar_standard_transparent = {
+        name = "progress_bar"
+        size = { 100% 100% }
+        visible = "[Holding.IsConstructionInProgress]"
+        value = "[Holding.GetConstructionProgress]"
+        alpha = 0.8
+      }
+    }
+
+    hbox = {
+      hbox = {
+        margin_left = 10
+
+          text_single = {
+          max_width = 100
+            name = "holding_name"
+            layoutpolicy_horizontal = expanding
+            text = "[Holding.GetProvince.GetNameNoTooltip]"
+            default_format = "#high"
+            align = nobaseline
+          }
+        }
+
+        expand = {}
+
+        hbox = {
+          visible = "[Holding.IsConstructionInProgress]"
+          text_single = {
+            max_width = 120
+            name = "construction_name"
+            text = "[Holding.GetConstructionBuilding.GetNameNoTooltip]"
+            align = right|nobaseline
+            default_format = "#high"
+          }
+        }
+
+      margin_right = 0
+
+        hbox = {
+        min_width = 10
+
+        icon = {
+          visible = "[Holding.IsLowControl]"
+          parentanchor = vcenter
+          size = { 20 20 }
+          texture = "gfx/interface/icons/map_icons/county_low_control.dds"
+          tooltip = "MY_REALM_WINDOW_MAP_ICON_LOW_CONTROL"
+        }
+
+        icon = {
+          visible = "[Holding.CanConstructAnyBuilding(GetPlayer)]"
+          parentanchor = vcenter
+          size = { 20 20 }
+          texture = "gfx/interface/icons/map_icons/county_building_available.dds"
+          tooltip = "MY_REALM_WINDOW_CONSTRUCT_BUILDING"
+        }
+      }
+      hbox = {
+        visible = "[Not(Holding.IsConstructionInProgress)]"
+
+        text_single = {
+          text = "HOLDING_TAX_VALUE"
+          min_width = 70
+          align = left|nobaseline
+          default_format = "#high"
+        }
+
+        text_single = {
+          text = "HOLDING_LEVY_SIZE"
+          min_width = 60
+          align = left|nobaseline
+          default_format = "#high"
+        }
+      }
+      spacer = { size = {10 0} }
+    }
+  }
+
+  type outliner_pin_color_filter_button = button_normal {
+    button_ignore = none
+    size = { 14 20 } 
+    onclick      = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'rightClick', GetNullCharacter.MakeScope ).End )]"
+    onrightclick = "[ScriptedGui.Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'rightClick', GetPlayer.MakeScope ).End )]"
+    visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+    texture = "gfx/interface/icons/flat_icons/pin.dds"
+  }
+
+  type outliner_choose_pin_color_button = button_normal {
+    button_ignore = none
+    size = { 14 20 } 
+    onclick = "[ScriptedGui.Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+    visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+    texture = "gfx/interface/icons/flat_icons/pin.dds"
+  }
+
+  type outliner_unpin_button = button_normal {
+    button_ignore = none
+    size = { 20 20 } 
+    onclick = "[Character.ToggleCharacterPinned]" 
+#    tooltip = "PIN_TT"
+    onrightclick = "[ScriptedGui.Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+    visible = "[ScriptedGui.IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+    texture = "gfx/interface/icons/flat_icons/unpin.dds"
+  }
+
+  type outliner_pinned_character_item = hbox {
+    name = "pinned_character_item"
+    layoutpolicy_horizontal = expanding
+    using = character_tooltip
+    visible = "[GetScriptedGui('outliner_show_character').IsShown( GuiScope.SetRoot( Character.MakeScope ).AddScope( 'actor', GetPlayer.MakeScope ).End )]"
+
+    button_list = {
+      name = "character_button"
+      size = { 0 24 }  # mod 0 55
+      layoutpolicy_horizontal = expanding
+  
+      onclick = "[DefaultOnCharacterClick(Character.GetID)]"
+      down = "[Character.IsShownInCharacterWindow]"
+      onrightclick = "[DefaultOnCharacterRightClick(Character.GetID)]"
+      button_ignore = none
+  
+      background = { using = Background_Area }
+  
+      state = { name = _mouse_hierarchy_enter on_start = "[PdxGuiWidget.FindChild('button_unpin').TriggerAnimation('button_unpin_show')]" }
+      state = { name = _mouse_hierarchy_leave on_start = "[PdxGuiWidget.FindChild('button_unpin').TriggerAnimation('button_unpin_hide')]" }
+  
+      hbox = {
+        margin = { 2 0 }
+        layoutpolicy_horizontal = expanding
+        spacing = 5
+  
+        icon = {
+          visible = "[Character.IsDeadAndValid]"
+          size = { 20 20 }
+          texture = "[Character.GetDeathReasonIcon]"
+          tooltip = "CHARACTER_DEAD_TOOLTIP"
+        }
+
+        outliner_icon = {
+          visible = "[And(Character.IsTraveling, Character.GetTravelPlan.IsInTransit)]"
+          texture = "gfx/interface/icons/portraits/travel_small.dds"
+          tooltip = "CHARACTER_TRAVELING_TOOLTIP"
+        }
+
+        has_inspiration_status_icon = {
+          size = { 20 20 }
+          texture = "gfx/interface/icons/portraits/inspiration_small.dds"
+        }
+
+        has_completed_inspiration_status_icon = {
+          size = { 20 20 }
+          texture = "gfx/interface/icons/portraits/inspiration_complete_small.dds"
+        }
+
+        icon = {
+          name = "can_be_punished"
+          visible = "[Character.CanBePunished]"
+          size = { 20 20 }
+
+          texture = "gfx/interface/icons/portraits/punishment_small.dds"
+          tooltip = "[Character.PunishmentTooltip]"
+        }
+
+        # TODO BP2: Add visible trigger and tooltip
+        icon = {
+          name = "hostage"
+          visible = no
+          size = { 20 20 }
+
+          texture = "gfx/interface/icons/portraits/hostage_small.dds"
+        }
+
+        icon = {
+          name = "hook"
+          visible = "[Character.PlayerHasHooksOrHookableSecrets]"
+          size = { 20 20 }
+
+          texture = "gfx/interface/icons/portraits/hook_secret_small.dds"
+          framesize = { 28 28 }
+          frame = "[Character.GetHookOrHookableSecretsFrame]"
+          tooltip = "[Character.HookTooltip]"
+        }
+
+        icon = {
+          name = "betrothed"
+#          visible = no
+          visible = "[And( Not( Character.IsAdult ), Not(ObjectsEqual( Character.GetPrimarySpouseOrBetrothed, GetNullCharacter )))]"
+          size = { 20 20 }
+          texture = "gfx/interface/icons/marriage_types.dds"
+          framesize = { 60 60 }
+          frame = "[Character.GetMarriageIconFrame( Character.Self )]"
+          tooltip = "[Character.GetMarriageIconTooltip( Character.Self )]"
+        }
+
+        icon = {
+          name = "ward"
+#          visible = no
+          visible = "[GetScriptedGui('outliner_icon_is_ward').IsShown( GuiScope.SetRoot( Character.MakeScope ).AddScope( 'actor', GetPlayer.MakeScope ).End )]"
+          size = { 20 20 }
+          texture = "gfx/interface/icons/court_position_types\court_tutor_court_position.dds"
+          tooltip = ""
+        }
+
+        icon = {
+          name = "prisoner"
+#          visible = no
+          visible = "[Character.IsImprisoned]"
+          size = { 20 20 }
+          texture = "gfx/interface/icons/character_interactions/prison.dds"
+#          texture = "gfx/interface/icons/portraits/punishment.dds"
+#          framesize = { 60 60 }
+#          frame = "[Character.GetMarriageIconFrame( Character.Self )]"
+#          tooltip = "[Character.GetMarriageIconTooltip( Character.Self )]"
+        }
+
+        outliner_icon_trait = { datacontext = "[GetTrait('pregnant')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('great_pox')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('smallpox')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('pneumonic')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('cancer')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('ill')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('maimed')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('typhus')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('sickly')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('measles')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('depressed_1')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('ergotism')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('dysentery')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('bubonic_plague')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('consumption')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('gout_ridden')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('infirm')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('wounded_3')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('wounded_2')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('wounded_1')]" }
+        outliner_icon_trait = { datacontext = "[GetTrait('leper')]" }
+#        outliner_icon_trait = { datacontext = "[GetTrait('xxx')]" }
+
+        text_single = {
+          layoutpolicy_horizontal = expanding
+          autoresize = no
+          text = "OUTLINER_PINNED_CHARACTER"
+          align = nobaseline
+          default_format = "#high"
+        }
+        expand = {}
+        text_single = {
+          align = top|right
+          size = { 28 20 }
+          layoutpolicy_horizontal = fixed
+          autoresize = no
+          text = "[Character.GetOpinionOf(GetPlayer)|=]"
+          fonttintcolor = "[Character.GetOpinionOfTint(GetPlayer)]"
+          default_format = "#high"
+        }
+        expand = {}
+
+        #######################################
+        # choose color interface buttons
+        #######################################
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_red"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_red')]"
+          modify_texture = { texture = "gfx/interface/colors/red.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_blue"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_blue')]"
+          modify_texture = { texture = "gfx/models/debug/blue.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_orange"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_orange')]"
+          modify_texture = { texture = "gfx/interface/colors/orange.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_green"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_green')]"
+          modify_texture = { texture = "gfx/interface/progressbars/progress_green.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_white"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_white')]"
+          modify_texture = { texture = "gfx/interface/colors/white.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_black"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_black')]"
+          modify_texture = { texture = "gfx/interface/colors/black.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_normal"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_normal')]"
+          modify_texture = { texture = "gfx/interface/colors/gold.dds" }
+        }
+
+        #######################################
+        # colored unpin buttons        
+        #######################################
+        outliner_unpin_button = {
+          name = "button_unpin_red"
+          datacontext = "[GetScriptedGui('outliner_unpin_red')]"
+          modify_texture = { texture = "gfx/interface/colors/red.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_blue"
+          datacontext = "[GetScriptedGui('outliner_unpin_blue')]"
+          modify_texture = { texture = "gfx/models/debug/blue.dds" }
+#          modify_texture = { texture = "gfx/interface/progressbars/progress_blue.dds" }
+#          modify_texture = { texture = "gfx/interface/colors/blue.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_orange"
+          datacontext = "[GetScriptedGui('outliner_unpin_orange')]"
+          modify_texture = { texture = "gfx/interface/colors/orange.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_green"
+          datacontext = "[GetScriptedGui('outliner_unpin_green')]"
+          modify_texture = { texture = "gfx/interface/progressbars/progress_green.dds" }
+#          modify_texture = { texture = "gfx/interface/colors/green.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_white"
+          datacontext = "[GetScriptedGui('outliner_unpin_white')]"
+          modify_texture = { texture = "gfx/interface/colors/white.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_black"
+          datacontext = "[GetScriptedGui('outliner_unpin_black')]"
+          modify_texture = { texture = "gfx/interface/colors/black.dds" }
+        }
+        button_pin = { 
+          name = "button_unpin" 
+          size = { 20 20 } 
+          onclick = "[Character.ToggleCharacterPinned]" 
+#          tooltip = "PIN_TT" 
+          button_ignore = none
+          visible = "[GetScriptedGui('outliner_unpin_normal').IsShown( GuiScope.SetRoot( Character.MakeScope ).End )]"
+          onrightclick = "[GetScriptedGui('outliner_unpin_normal').Execute( GuiScope.SetRoot( Character.MakeScope ).End )]"
+          texture = "gfx/interface/icons/flat_icons/unpin.dds"
+        }
+      }
+    }
+  }
+
+  type outliner_icon = icon { size = { 20 20 } }
+  
+  type outliner_icon_trait = icon_trait {
+#    size = { 20 20 }
+    visible = "[Character.HasTrait( Trait.Self )]"
+
+    blockoverride "icon_size" {
+      size = { 20 20 } 
+    }
+  }
+}
+
+
+local_template character_tooltip
+{
+  tooltip_visible = "[Not(IsInteractionMenuOpenForCharacter(Character.GetID))]"
+  tooltipwidget = { 
+    cooltip_type = { 
+      blockoverride "interaction_info" { text = "CHARACTER_TOOLTIP_INSTRUCTION" } 
+    } 
+  }
+  using = tooltip_ws
+}
