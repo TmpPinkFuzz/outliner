@@ -193,9 +193,19 @@ widget = {
                 modify_texture = { texture = "gfx/interface/colors/red.dds" }
               }
               outliner_pin_color_filter_button = {
+                name = "button_color_filter_lavender"
+                datacontext = "[GetScriptedGui('outliner_color_filter_lavender')]"
+                modify_texture = { texture = "gfx/interface/colors/outliner_lavender.dds" }
+              }
+              outliner_pin_color_filter_button = {
                 name = "button_color_filter_blue"
                 datacontext = "[GetScriptedGui('outliner_color_filter_blue')]"
                 modify_texture = { texture = "gfx/models/debug/blue.dds" }
+              }
+              outliner_pin_color_filter_button = {
+                name = "button_color_filter_yellow"
+                datacontext = "[GetScriptedGui('outliner_color_filter_yellow')]"
+                modify_texture = { texture = "gfx/interface/colors/outliner_yellow.dds" }
               }
               outliner_pin_color_filter_button = {
                 name = "button_color_filter_orange"
@@ -468,7 +478,7 @@ types Outliner {
 
         icon = {
           visible = "[Holding.IsLowControl]"
-          parentanchor = vcenter
+#          parentanchor = vcenter
           size = { 20 20 }
           texture = "gfx/interface/icons/map_icons/county_low_control.dds"
           tooltip = "MY_REALM_WINDOW_MAP_ICON_LOW_CONTROL"
@@ -476,7 +486,7 @@ types Outliner {
 
         icon = {
           visible = "[Holding.CanConstructAnyBuilding(GetPlayer)]"
-          parentanchor = vcenter
+#          parentanchor = vcenter
           size = { 20 20 }
           texture = "gfx/interface/icons/map_icons/county_building_available.dds"
           tooltip = "MY_REALM_WINDOW_CONSTRUCT_BUILDING"
@@ -550,7 +560,10 @@ types Outliner {
   
       state = { name = _mouse_hierarchy_enter on_start = "[PdxGuiWidget.FindChild('button_unpin').TriggerAnimation('button_unpin_show')]" }
       state = { name = _mouse_hierarchy_leave on_start = "[PdxGuiWidget.FindChild('button_unpin').TriggerAnimation('button_unpin_hide')]" }
-  
+
+##################################################################
+# character status icons
+##################################################################  
       hbox = {
         margin = { 2 0 }
         layoutpolicy_horizontal = expanding
@@ -562,6 +575,8 @@ types Outliner {
           texture = "[Character.GetDeathReasonIcon]"
           tooltip = "CHARACTER_DEAD_TOOLTIP"
         }
+
+        using = Uimod_Scheme_Icons
 
         outliner_icon = {
           visible = "[And(Character.IsTraveling, Character.GetTravelPlan.IsInTransit)]"
@@ -624,7 +639,7 @@ types Outliner {
 #          visible = no
           visible = "[GetScriptedGui('outliner_icon_is_ward').IsShown( GuiScope.SetRoot( Character.MakeScope ).AddScope( 'actor', GetPlayer.MakeScope ).End )]"
           size = { 20 20 }
-          texture = "gfx/interface/icons/court_position_types\court_tutor_court_position.dds"
+          texture = "gfx/interface/icons/court_position_types/court_tutor_court_position.dds"
           tooltip = ""
         }
 
@@ -691,9 +706,19 @@ types Outliner {
           modify_texture = { texture = "gfx/interface/colors/red.dds" }
         }
         outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_lavender"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_lavender')]"
+          modify_texture = { texture = "gfx/interface/colors/outliner_lavender.dds" }
+        }
+        outliner_choose_pin_color_button = {
           name = "button_choose_pin_color_pin_blue"
           datacontext = "[GetScriptedGui('outliner_choose_pin_color_blue')]"
           modify_texture = { texture = "gfx/models/debug/blue.dds" }
+        }
+        outliner_choose_pin_color_button = {
+          name = "button_choose_pin_color_pin_yellow"
+          datacontext = "[GetScriptedGui('outliner_choose_pin_color_yellow')]"
+          modify_texture = { texture = "gfx/interface/colors/outliner_yellow.dds" }
         }
         outliner_choose_pin_color_button = {
           name = "button_choose_pin_color_pin_orange"
@@ -703,7 +728,7 @@ types Outliner {
         outliner_choose_pin_color_button = {
           name = "button_choose_pin_color_pin_green"
           datacontext = "[GetScriptedGui('outliner_choose_pin_color_green')]"
-          modify_texture = { texture = "gfx/interface/progressbars/progress_green.dds" }
+          modify_texture = { texture = "gfx/interface/colors/outliner_green.dds" }
         }
         outliner_choose_pin_color_button = {
           name = "button_choose_pin_color_pin_white"
@@ -730,11 +755,19 @@ types Outliner {
           modify_texture = { texture = "gfx/interface/colors/red.dds" }
         }
         outliner_unpin_button = {
+          name = "button_unpin_lavender"
+          datacontext = "[GetScriptedGui('outliner_unpin_lavender')]"
+          modify_texture = { texture = "gfx/interface/colors/outliner_lavender.dds" }
+        }
+        outliner_unpin_button = {
           name = "button_unpin_blue"
           datacontext = "[GetScriptedGui('outliner_unpin_blue')]"
           modify_texture = { texture = "gfx/models/debug/blue.dds" }
-#          modify_texture = { texture = "gfx/interface/progressbars/progress_blue.dds" }
-#          modify_texture = { texture = "gfx/interface/colors/blue.dds" }
+        }
+        outliner_unpin_button = {
+          name = "button_unpin_yellow"
+          datacontext = "[GetScriptedGui('outliner_unpin_yellow')]"
+          modify_texture = { texture = "gfx/interface/colors/outliner_yellow.dds" }
         }
         outliner_unpin_button = {
           name = "button_unpin_orange"
@@ -744,8 +777,7 @@ types Outliner {
         outliner_unpin_button = {
           name = "button_unpin_green"
           datacontext = "[GetScriptedGui('outliner_unpin_green')]"
-          modify_texture = { texture = "gfx/interface/progressbars/progress_green.dds" }
-#          modify_texture = { texture = "gfx/interface/colors/green.dds" }
+          modify_texture = { texture = "gfx/interface/colors/outliner_green.dds" }
         }
         outliner_unpin_button = {
           name = "button_unpin_white"

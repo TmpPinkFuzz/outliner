@@ -10,12 +10,14 @@ toggle_outliner_pin_color_filter = {
 }
 
 outliner_pin_color_filter_set_all = {
-  set_variable = { name = outliner_pin_color_filter_red    value = $VAL$ }
-  set_variable = { name = outliner_pin_color_filter_blue   value = $VAL$ }
-  set_variable = { name = outliner_pin_color_filter_orange value = $VAL$ }
-  set_variable = { name = outliner_pin_color_filter_green  value = $VAL$ }
-  set_variable = { name = outliner_pin_color_filter_white  value = $VAL$ }
-  set_variable = { name = outliner_pin_color_filter_black  value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_red      value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_lavender value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_blue     value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_yellow   value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_orange   value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_green    value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_white    value = $VAL$ }
+  set_variable = { name = outliner_pin_color_filter_black    value = $VAL$ }
 }
   
 
@@ -25,7 +27,7 @@ outliner_pin_color_filter_effect = {
     if = {
       limit = {
         outliner_pin_color_filter_$COLOR$ = 0
-        outliner_pin_color_filter_sum < 5
+        outliner_pin_color_filter_sum < PIN_COLOR_SUM
       }
       outliner_pin_color_filter_set_all = { VAL = 1 }
       set_variable = { name = outliner_pin_color_filter_$COLOR$ value = 0 }

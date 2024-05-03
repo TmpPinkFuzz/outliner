@@ -4,8 +4,18 @@ outliner_unpin_red = {
   effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
 }
 
+outliner_unpin_lavender = {
+  is_shown = { outliner_pin_color = PIN_COLOR_LAVENDER }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
 outliner_unpin_blue = {
   is_shown = { outliner_pin_color = PIN_COLOR_BLUE }
+  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+}
+
+outliner_unpin_yellow = {
+  is_shown = { outliner_pin_color = PIN_COLOR_YELLOW }
   effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
 }
 
@@ -39,6 +49,13 @@ outliner_unpin_normal = {
   effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
 }
 
+#outliner_unpin_xxx = {
+#  is_shown = { outliner_pin_color = PIN_COLOR_XXX }
+#  effect = { set_variable = { name = outliner_choosing_pin_color value = yes } }
+#}
+
+
+
 outliner_choose_pin_color_red = {
   is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_RED } }
   is_valid = { always = yes  }
@@ -49,6 +66,16 @@ outliner_choose_pin_color_red = {
   }
 }
 
+outliner_choose_pin_color_lavender = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_LAVENDER } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_LAVENDER }
+  }
+}
+
 outliner_choose_pin_color_blue = {
   is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_BLUE } }
   is_valid = { always = yes  }
@@ -56,6 +83,16 @@ outliner_choose_pin_color_blue = {
   effect = {
     remove_variable = outliner_choosing_pin_color
     set_variable = { name = outliner_pin_color value = PIN_COLOR_BLUE }
+  }
+}
+
+outliner_choose_pin_color_yellow = {
+  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_YELLOW } }
+  is_valid = { always = yes  }
+  ai_is_valid = { always = no  }
+  effect = {
+    remove_variable = outliner_choosing_pin_color
+    set_variable = { name = outliner_pin_color value = PIN_COLOR_YELLOW }
   }
 }
 
@@ -109,6 +146,16 @@ outliner_choose_pin_color_normal = {
   }
 }
 
+#outliner_choose_pin_color_xxx = {
+#  is_shown = { exists = var:outliner_choosing_pin_color NOT = { outliner_pin_color = PIN_COLOR_XXX } }
+#  is_valid = { always = yes  }
+#  ai_is_valid = { always = no  }
+#  effect = {
+#    remove_variable = outliner_choosing_pin_color
+#    set_variable = { name = outliner_pin_color value = PIN_COLOR_XXX }
+#  }
+#}
+
 outliner_show_character = {
   scope = character 
   saved_scopes = { actor }
@@ -117,12 +164,14 @@ outliner_show_character = {
       switch = {
         trigger = root.outliner_pin_color
         0 = { always = yes }
-        1 = { outliner_pin_color_filter_red = 0 }    # PIN_COLOR_RED   
-        2 = { outliner_pin_color_filter_blue = 0 }   # PIN_COLOR_BLUE   
-        3 = { outliner_pin_color_filter_orange = 0 } # PIN_COLOR_ORANGE 
-        4 = { outliner_pin_color_filter_green = 0 }  # PIN_COLOR_GREEN  
-        5 = { outliner_pin_color_filter_white = 0 }  # PIN_COLOR_WHITE  
-        6 = { outliner_pin_color_filter_black = 0 }  # PIN_COLOR_BLACK  
+        1 = { outliner_pin_color_filter_red = 0 }       # PIN_COLOR_RED   
+        2 = { outliner_pin_color_filter_blue = 0 }      # PIN_COLOR_BLUE   
+        3 = { outliner_pin_color_filter_orange = 0 }    # PIN_COLOR_ORANGE 
+        4 = { outliner_pin_color_filter_green = 0 }     # PIN_COLOR_GREEN  
+        5 = { outliner_pin_color_filter_white = 0 }     # PIN_COLOR_WHITE  
+        6 = { outliner_pin_color_filter_black = 0 }     # PIN_COLOR_BLACK  
+        7 = { outliner_pin_color_filter_lavender = 0 }  # PIN_COLOR_LAVENDER
+        8 = { outliner_pin_color_filter_yellow = 0 }    # PIN_COLOR_YELLOW
       }
     }
   }
@@ -137,12 +186,30 @@ outliner_color_filter_red = {
   }
 }
 
+outliner_color_filter_lavender = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_LAVENDER } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = lavender }
+  }
+}
+
 outliner_color_filter_blue = {
   scope = character
   saved_scopes = { rightClick }
   is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_BLUE } }
   effect = {
     outliner_pin_color_filter_effect = { COLOR = blue }
+  }
+}
+
+outliner_color_filter_yellow = {
+  scope = character
+  saved_scopes = { rightClick }
+  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_YELLOW } }
+  effect = {
+    outliner_pin_color_filter_effect = { COLOR = yellow }
   }
 }
 
@@ -181,6 +248,15 @@ outliner_color_filter_black = {
     outliner_pin_color_filter_effect = { COLOR = black }
   }
 }
+
+#outliner_color_filter_xxx = {
+#  scope = character
+#  saved_scopes = { rightClick }
+#  is_shown = { any_pinned_character = { outliner_pin_color = PIN_COLOR_XXX } }
+#  effect = {
+#    outliner_pin_color_filter_effect = { COLOR = xxx }
+#  }
+#}
 
 outliner_icon_is_ward = {
   scope = character
